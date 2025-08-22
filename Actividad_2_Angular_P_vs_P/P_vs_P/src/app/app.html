@@ -1,0 +1,20 @@
+<header>
+    <h1 id="players-name">{{ player1Name() }} vs {{ player2Name() }}</h1>
+</header>
+<main>
+    <section>
+        <h2 id="player1-name">{{ player1Name() }}</h2>
+        <div id="player1-health">Health: {{ player1Health() }}</div>
+        <img [src]="player1Img()" alt="Player 1" class="player1-image" id="player1-image">
+        <button id="player1-attack" (click)="playerAttack1()" [disabled]="turn() !== 'p1'">Attack</button>
+    </section>
+    <section>
+        <h2 id="player2-name">{{ player2Name() }}</h2>
+        <div id="player2-health">Health: {{ player2Health() }}</div>
+        <img [src]="player2Img()" alt="Player 2" class="player2-image" id="player2-image">
+        <button id="player2-attack" (click)="playerAttack2()" [disabled]="turn() !== 'p2'">Attack</button>
+    </section>
+</main>
+<footer>
+    <label id="history">{{ history() }}</label>
+</footer>
