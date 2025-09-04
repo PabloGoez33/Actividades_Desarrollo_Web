@@ -11,7 +11,8 @@
 
 .characteristics {
     display: flex;
-    margin: 20px;
+    margin-top: 0px;
+    margin-bottom: 20px;
     padding: 10px;
     justify-content: space-around;
     align-items: center;

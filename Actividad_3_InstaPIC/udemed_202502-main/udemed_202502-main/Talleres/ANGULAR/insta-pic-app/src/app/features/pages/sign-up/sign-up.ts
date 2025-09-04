@@ -1,6 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { Auth } from '../../../shared/services/auth';
+import { User } from '../../../shared/interfaces/user';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sign-up',
@@ -11,11 +14,14 @@ import { Router, RouterLink } from '@angular/router';
 export class SignUp {
 
   fb = inject(FormBuilder);
+
   router = inject(Router);
 
-  ruta = '';
+  authService = inject(Auth);
 
   title = 'Registro de usuario';
+
+  ruta = "";
 
   validators = [Validators.required, Validators.minLength(4)];
 
@@ -29,28 +35,35 @@ export class SignUp {
 
   onSignUp(){
     if(!this.signUpForm.valid){
-      alert('Faltan campos por diligenciar');
+      Swal.fire({
+        icon: 'warning',
+        text: 'Faltan campos por diligenciar'
+      });
       return;
     }
-    let user = this.signUpForm.value;
-    console.log(user);
+
+    let user = this.signUpForm.value as User;
+    
+    let signUpResponse = this.authService.signUp(user);
 
     if(user.password !== user.rePassword){
-      alert('Las contraseñas no coinciden');
+      Swal.fire({
+        icon: 'warning',
+        text: 'Las contraseñas no coinciden'
+      });
       return;
     }
 
-    if(localStorage.getItem(user.username!)){
-      alert('Usuario ya existe');
+    if(!!signUpResponse.success){
+      this.router.navigate([signUpResponse.redirectTo]);
       return;
     }
 
-    localStorage.setItem(user.username!, JSON.stringify(user));
-    alert('Usuario registrado exitosamente');
-
-    this.router.navigate(['/login']);
-
-    //let user2 = JSON.parse(JSON.stringify(user))
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: signUpResponse.message
+    });
 
   }
 
