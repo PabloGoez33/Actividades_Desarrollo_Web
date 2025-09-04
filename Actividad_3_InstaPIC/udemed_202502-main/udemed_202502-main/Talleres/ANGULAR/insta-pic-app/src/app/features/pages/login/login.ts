@@ -5,6 +5,8 @@ import Swal from 'sweetalert2';
 import { Auth } from '../../../shared/services/auth';
 import { User } from '../../../shared/interfaces/user';
 
+import { noSpaces } from '../../../shared/validators/no-space';
+
 @Component({
   selector: 'app-login',
   imports: [RouterLink, ReactiveFormsModule],
@@ -26,12 +28,22 @@ export class Login {
   validators = [Validators.required, Validators.minLength(4)];
 
   signInForm = this.fb.group({
-    username:['', [Validators.required]],
+    username:['', [Validators.required, noSpaces, Validators.minLength(4)]],
     password:['', this.validators]
   })
 
 
   onSignIn(){
+    //Validar username sin espacios
+    if(this.signInForm.get('username')?.hasError('noSpaces')){
+      Swal.fire({
+        icon: 'warning',
+        text: 'El nombre de usuario no puede contener espacios'
+      });
+      return;
+    }
+
+    //Validar campos faltantes
     if(!this.signInForm.valid){
       Swal.fire({
         icon: 'warning',

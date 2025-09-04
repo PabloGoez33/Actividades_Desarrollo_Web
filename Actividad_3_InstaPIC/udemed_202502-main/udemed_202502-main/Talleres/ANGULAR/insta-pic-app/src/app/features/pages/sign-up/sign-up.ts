@@ -5,6 +5,9 @@ import { Auth } from '../../../shared/services/auth';
 import { User } from '../../../shared/interfaces/user';
 import Swal from 'sweetalert2';
 
+import { noSpaces } from '../../../shared/validators/no-space';
+import { passwordMatch } from '../../../shared/validators/password-match';
+
 @Component({
   selector: 'app-sign-up',
   imports: [RouterLink, ReactiveFormsModule],
@@ -26,18 +29,29 @@ export class SignUp {
   validators = [Validators.required, Validators.minLength(4)];
 
   signUpForm = this.fb.group({
-    username:['jjzapata', [Validators.required]],
+    username:['', [Validators.required, noSpaces, Validators.minLength(4)]],
     email:['', [Validators.required]],
     password:['', this.validators],
     rePassword:['',  this.validators],
-  })
+  }, {validators: passwordMatch});
 
 
   onSignUp(){
-    if(!this.signUpForm.valid){
+    //Validar username sin espacios
+    if(this.signUpForm.get('username')?.hasError('noSpaces')){
       Swal.fire({
         icon: 'warning',
-        text: 'Faltan campos por diligenciar'
+        text: 'El nombre de usuario no puede contener espacios'
+      });
+      return;
+    }
+
+    //Validar contraseñas iguales y campos faltantes
+    if(!this.signUpForm.valid){
+      const mismatch = this.signUpForm.errors?.['passwordMismatch'];
+      Swal.fire({
+        icon: 'warning',
+        text: mismatch ? 'Las contraseñas no coinciden' : 'Faltan campos por diligenciar'
       });
       return;
     }
@@ -45,14 +59,6 @@ export class SignUp {
     let user = this.signUpForm.value as User;
     
     let signUpResponse = this.authService.signUp(user);
-
-    if(user.password !== user.rePassword){
-      Swal.fire({
-        icon: 'warning',
-        text: 'Las contraseñas no coinciden'
-      });
-      return;
-    }
 
     if(!!signUpResponse.success){
       this.router.navigate([signUpResponse.redirectTo]);
