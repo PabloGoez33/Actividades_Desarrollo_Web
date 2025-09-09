@@ -1,27 +1,25 @@
-<main class="main_home">
-    <section class="characteristics">
-        <div class="topnavProfile">
-            <img src="/img/usuario.png" class="profileImg" />
-            <p>Juan Perez</p>
-        </div>
-        <div class="topnavProfile">
-            <h3 class="h3Profile">20</h3>
-            <p>Posts</p>
-        </div>
-        <div class="topnavProfile">
-            <h3 class="h3Profile">150</h3>
-            <p>Seguidores</p>
-        </div>
-        <div class="topnavProfile">
-            <h3 class="h3Profile">35</h3>
-            <p>Solicitudes</p>
-        </div>
-
-    </section>
-    <section>
-        <img src="/img/R.jpg" class="imgProfile"/>
-        <img src="/img/R.jpg" class="imgProfile"/> <br>
-        <img src="/img/R.jpg" class="imgProfile"/>
-        <img src="/img/R.jpg" class="imgProfile"/>
-    </section>
-</main>
+<section id="profile">
+  <div>
+    <img src="/assets/batman_avatar.webp" />
+    <span id="userName">{{ username }}</span>
+  </div>
+  <div (click)="onAddImage()">
+    <span>
+      {{ galleryItems().length }}
+    </span>
+    <span>Publicaciones</span>
+  </div>
+  <div>
+    <span>{{followers}}</span>
+    <span>Seguidores</span>
+  </div>
+  <div>
+    <span>{{requests}}</span>
+    <span>Solicitudes</span>
+  </div>
+</section>
+<section id="gallery">
+  @for ( image of galleryItems(); track image.id ) {
+    <img [src]="image.url" />
+  }
+</section>

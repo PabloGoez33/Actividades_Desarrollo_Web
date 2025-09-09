@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { User } from '../interfaces/user';
 import { LoginResponse, SignUpResponse } from '../interfaces/login-response';
 
@@ -6,12 +6,20 @@ import { LoginResponse, SignUpResponse } from '../interfaces/login-response';
   providedIn: 'root'
 })
 export class Auth {
+
+  isLogged = signal(false);
+
+  constructor() {
+    this.verifyUserLogged();
+  }
   
   login(user: User): LoginResponse{
 
-    let userStr = localStorage.getItem(user.username!);
+    let userStr = localStorage.getItem(user.username);
 
     if(userStr && user.password === JSON.parse(userStr)['password']){
+      sessionStorage.setItem('userLogged', user.username);
+      this.verifyUserLogged();
       return {success: true, redirectTo: 'home'};
     }
 
@@ -26,10 +34,32 @@ export class Auth {
     }
 
     localStorage.setItem(user.username, JSON.stringify(user));
+    sessionStorage.setItem('userLogged', user.username);
+    this.verifyUserLogged();
     return {success: true, redirectTo: 'home'};
 
   }
 
+  private verifyUserLogged(){
+    this.isLogged.set(!!sessionStorage.getItem('userLogged'));
+  }
+
+  logout(){
+    sessionStorage.clear();
+    this.verifyUserLogged();
+  }
+
+  getUserLogged(){
+    if(!!sessionStorage.getItem('userLogged')){
+      return {
+        username:sessionStorage.getItem('userLogged')!
+      }
+    }
+
+    return {
+      username: ''
+    }
+  }
 
   private getUser(username: string){
     
