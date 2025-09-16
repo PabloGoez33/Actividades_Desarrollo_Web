@@ -1,5 +1,6 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { Auth } from '../../../shared/services/auth';
+import { UserServices } from '../../../shared/services/user-services';
 
 @Component({
   selector: 'app-home',
@@ -7,75 +8,23 @@ import { Auth } from '../../../shared/services/auth';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class Home {
+export class Home implements OnInit {
 
   authService = inject(Auth);
+  userService = inject(UserServices);
+
   followers = 48;
   requests = 37;
   username = this.authService.getUserLogged().username;
+  galleryItems = signal([]);
 
-  galleryItems = signal([
-    {
-      id: 1,
-      url: '/assets/gallery0.jpg',
-      comments: ['Hola', 'Bien']
-    },
-    {
-      id: 2,
-      url: '/assets/gallery1.jpg',
-      comments: ['Hola', 'Bien']
-    },
-    {
-      id: 3,
-      url: '/assets/gallery2.webp',
-      comments: []
-    },
-    {
-      id: 4,
-      url: '/assets/gallery3.jpeg',
-      comments: []
-    },
-    {
-      id: 5,
-      url: '/assets/gallery4.jpg',
-      comments: []
-    },
-    {
-      id: 6,
-      url: '/assets/gallery5.jpg',
-      comments: []
-    },
-    {
-      id: 7,
-      url: '/assets/gallery6.jpg',
-      comments: []
-    },
-    {
-      id: 8,
-      url: '/assets/gallery7.jpg',
-      comments: ['Hola', 'Bien']
-    },
-    {
-      id: 9,
-      url: '/assets/gallery8.webp',
-      comments: []
-    },
-    {
-      id: 10,
-      url: '/assets/gallery9.avif',
-      comments: []
+  ngOnInit(): void {
+    const user = this.userService.getUser(this.username);
+
+    if (user) {
+      this.galleryItems.set(user.gallery);
     }
-  ]);
+  }
 
-  onAddImage(){
-    let newImage = {
-      id: 2,
-      url: '/assets/gallery1.jpg',
-      comments: ['Hola', 'Bien']
-    };
-
-    this.galleryItems.update(currentValue => {
-      return [...currentValue, newImage];
-    })
-  };
+  
 }
