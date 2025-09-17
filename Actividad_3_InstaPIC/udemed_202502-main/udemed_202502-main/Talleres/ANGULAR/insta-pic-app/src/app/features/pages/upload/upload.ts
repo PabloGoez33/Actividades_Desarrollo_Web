@@ -3,7 +3,7 @@ import { Storage } from '../../../shared/services/storage';
 import { Auth } from '../../../shared/services/auth';
 import { UserServices } from '../../../shared/services/user-services';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
+import { Notification } from '../../../shared/services/notification';
 
 @Component({
   selector: 'app-upload',
@@ -17,6 +17,7 @@ export class Upload {
   authService = inject(Auth)
   userService = inject(UserServices)
   router = inject(Router)
+  notification = inject(Notification)
 
   onUploadImage(event: Event) {
 
@@ -33,11 +34,17 @@ export class Upload {
         if (response && response.data) {
           const url = this.storageService.getImageUrl(response.data.fullPath);
           this.userService.saveImage(username, url);
+          this.notification.showSuccess('La imagen se cargo correctamente 🎉', { imageUrl: url })
         } else if (response) {
-          Swal.fire('Error!!')
+          this.notification.showError('No se recibió la respuesta esperada del servidor.')
         }
-      });
-      this.router.navigate(['home']);
+      })
+      .catch(() => {
+        this.notification.showError('Hubo un problema al subir la imagen 😢')
+      })
+      .finally(() => {
+        this.router.navigate(['home']);
+      })
   }
 
 }
