@@ -1,0 +1,25 @@
+<div class="wrap">
+    <div class="toolbar">
+        <button (click)="count = count + 1">Incrementar @Input</button>
+        <button (click)="count = count - 1">Decrementar @Input</button>
+        <button (click)="flipProjected()">Cambiar contenido proyectado</button>
+        <button (click)="toggleChild()">{{ showChild ? 'Destruir hijo' : 'Crear hijo'}}</button>
+        <div class="spacer"></div>
+        <div class="stat">count = {{count}}</div>
+    </div>
+
+
+    <ng-container *ngIf="showChild; else noChild">
+        <app-life-cycle [count]="count">
+            <span class="chip">{{ projected }}</span>
+            <span class="chip">#{{ count }}</span>
+        </app-life-cycle>
+    </ng-container>
+
+
+    <ng-template #noChild>
+        <div class="placeholder">
+            (Hijo destruido — al volver a crearlo verás correr de nuevo todos los hooks iniciales)
+        </div>
+    </ng-template>
+</div>
